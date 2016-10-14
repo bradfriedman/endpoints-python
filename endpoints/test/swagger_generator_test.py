@@ -297,10 +297,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
                 'post': {
                     'operationId': 'MyService_entriesPut',
@@ -313,10 +309,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             },
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/entries/container': {
@@ -402,10 +394,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/entries/container/{entryId}/items': {
@@ -424,10 +412,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/entries/container/{entryId}/publish': {
@@ -446,10 +430,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/entries/{entryId}/items': {
@@ -468,10 +448,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/entries/{entryId}/publish': {
@@ -490,10 +466,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/nested': {
@@ -505,10 +477,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/process': {
@@ -520,10 +488,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/roundtrip': {
@@ -538,10 +502,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             },
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
         },
@@ -731,10 +691,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
         },
@@ -798,9 +754,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'api_key': [],
                         }
                     ],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
             '/root/v1/override': {
@@ -812,10 +765,6 @@ class SwaggerGeneratorTest(unittest.TestCase):
                             'description': 'A successful response',
                         },
                     },
-                    'security': [],
-                    'x-security': [
-                        {'google_id_token': {'audiences': []}},
-                    ],
                 },
             },
         },

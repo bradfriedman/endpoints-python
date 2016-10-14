@@ -629,9 +629,10 @@ class SwaggerGenerator(object):
       descriptor['security'] = self.__security_descriptor(
           method_info.audiences, security_definitions,
           api_key_required=api_key_required)
-    elif service.api_info.audiences is not None:
-      descriptor['x-security'] = self.__x_security_descriptor(
-          service.api_info.audiences, security_definitions)
+    elif service.api_info.audiences is not None or api_key_required:
+      if service.api_info.audiences:
+        descriptor['x-security'] = self.__x_security_descriptor(
+            service.api_info.audiences, security_definitions)
       descriptor['security'] = self.__security_descriptor(
           service.api_info.audiences, security_definitions,
           api_key_required=api_key_required)

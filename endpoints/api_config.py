@@ -518,8 +518,6 @@ class _ApiDecorator(object):
 
       if hostname is None:
         hostname = app_identity.get_default_version_hostname()
-      if audiences is None:
-        audiences = []
       if scopes is None:
         scopes = [EMAIL_SCOPE]
       if allowed_client_ids is None:
