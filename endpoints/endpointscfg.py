@@ -203,7 +203,7 @@ def GenApiConfig(service_class_names, config_string_generator=None,
     # Map each API by name-version.
     service_map['%s-%s' % api_info] = (
         config_string_generator.pretty_print_config_to_json(
-            services, hostname=hostname))
+            services, hostname=hostname, local=True))
 
   return service_map
 

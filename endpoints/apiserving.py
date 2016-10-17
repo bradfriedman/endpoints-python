@@ -321,7 +321,8 @@ class _ApiServer(object):
     for service_factories in api_name_version_map.itervalues():
       service_classes = [service_factory.service_class
                          for service_factory in service_factories]
-      config_file = generator.pretty_print_config_to_json(service_classes)
+      config_file = generator.pretty_print_config_to_json(
+          service_classes, local=False)
       api_config_registry.register_backend(config_file)
 
       for service_factory in service_factories:

@@ -122,7 +122,7 @@ class DiscoveryService(object):
       return util.send_wsgi_error_response(error_msg, start_response)
     return self._send_success_response(doc, start_response)
 
-  def _generate_api_config_with_root(self, request):
+  def _generate_api_config_with_root(self, request, local=True):
     """Generate an API config with a specific root hostname.
 
     This uses the backend object and the ApiConfigGenerator to create an API
@@ -131,6 +131,9 @@ class DiscoveryService(object):
 
     Args:
       request: An ApiRequest, the transformed request sent to the Discovery API.
+      local: bool, True if locally generated. If true, protocol will be
+        determined by whether the host is localhost. Otherwise, it will be
+        determined by whether the app is running on a dev server.
 
     Returns:
       A string representation of the generated API config.
@@ -148,7 +151,7 @@ class DiscoveryService(object):
     service_classes = [service_factory.service_class
                        for service_factory in service_factories]
     config_dict = generator.get_config_dict(
-        service_classes, hostname=actual_root)
+        service_classes, hostname=actual_root, local=local)
 
     # Save to cache
     for config in config_dict.get('items', []):

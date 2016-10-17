@@ -1833,7 +1833,7 @@ class ApiConfigGenerator(object):
 
     return rules
 
-  def __api_descriptor(self, services, hostname=None):
+  def __api_descriptor(self, services, hostname=None, local=True):
     """Builds a description of an API.
 
     Args:
@@ -1841,6 +1841,9 @@ class ApiConfigGenerator(object):
         api/version.
       hostname: string, Hostname of the API, to override the value set on the
         current service. Defaults to None.
+      local: bool, True if locally generated. If true, protocol will be
+        determined by whether the host is localhost. Otherwise, it will be
+        determined by whether the app is running on a dev server.
 
     Returns:
       A dictionary that can be deserialized into JSON and stored as an API
@@ -1854,7 +1857,8 @@ class ApiConfigGenerator(object):
     """
     merged_api_info = self.__get_merged_api_info(services)
     descriptor = self.get_descriptor_defaults(merged_api_info,
-                                              hostname=hostname)
+                                              hostname=hostname,
+                                              local=local)
     description = merged_api_info.description
     if not description and len(services) == 1:
       description = services[0].__doc__
@@ -1914,23 +1918,29 @@ class ApiConfigGenerator(object):
 
     return descriptor
 
-  def get_descriptor_defaults(self, api_info, hostname=None):
+  def get_descriptor_defaults(self, api_info, hostname=None, local=True):
     """Gets a default configuration for a service.
 
     Args:
       api_info: _ApiInfo object for this service.
       hostname: string, Hostname of the API, to override the value set on the
         current service. Defaults to None.
+      local: bool, True if locally generated. If true, protocol will be
+        determined by whether the host is localhost. Otherwise, it will be
+        determined by whether the app is running on a dev server.
 
     Returns:
       A dictionary with the default configuration.
     """
     hostname = (hostname or endpoints_util.get_app_hostname() or
                 api_info.hostname)
-    protocol = ('http' if hostname and hostname.startswith('localhost') else
-                'https')
-    protocol = ('http' if hostname and hostname.startswith('localhost') else
-                'https')
+    if local:
+      protocol = ('http' if hostname and hostname.startswith('localhost') else
+                  'https')
+    else:
+      protocol = ('http' if endpoints_util.is_running_on_devserver() else
+                  'https')
+
     defaults = {
         'extends': 'thirdParty.api',
         'root': '{0}://{1}/_ah/api'.format(protocol, hostname),
@@ -1958,7 +1968,7 @@ class ApiConfigGenerator(object):
       defaults['documentation'] = api_info.documentation
     return defaults
 
-  def get_config_dict(self, services, hostname=None):
+  def get_config_dict(self, services, hostname=None, local=True):
     """JSON dict description of a protorpc.remote.Service in API format.
 
     Args:
@@ -1966,6 +1976,9 @@ class ApiConfigGenerator(object):
         that implements an api/version.
       hostname: string, Hostname of the API, to override the value set on the
         current service. Defaults to None.
+      local: bool, True if locally generated. If true, protocol will be
+        determined by whether the host is localhost. Otherwise, it will be
+        determined by whether the app is running on a dev server.
 
     Returns:
       dict, The API descriptor document as a JSON dict.
@@ -1978,9 +1991,9 @@ class ApiConfigGenerator(object):
     endpoints_util.check_list_type(services, remote._ServiceClass, 'services',
                                    allow_none=False)
 
-    return self.__api_descriptor(services, hostname=hostname)
+    return self.__api_descriptor(services, hostname=hostname, local=local)
 
-  def pretty_print_config_to_json(self, services, hostname=None):
+  def pretty_print_config_to_json(self, services, hostname=None, local=True):
     """JSON string description of a protorpc.remote.Service in API format.
 
     Args:
@@ -1988,10 +2001,13 @@ class ApiConfigGenerator(object):
         that implements an api/version.
       hostname: string, Hostname of the API, to override the value set on the
         current service. Defaults to None.
+      local: bool, True if locally generated. If true, protocol will be
+        determined by whether the host is localhost. Otherwise, it will be
+        determined by whether the app is running on a dev server.
 
     Returns:
       string, The API descriptor document as a JSON string.
     """
-    descriptor = self.get_config_dict(services, hostname)
+    descriptor = self.get_config_dict(services, hostname=hostname, local=local)
     return json.dumps(descriptor, sort_keys=True, indent=2,
                       separators=(',', ': '))

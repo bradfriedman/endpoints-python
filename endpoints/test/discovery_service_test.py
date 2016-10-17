@@ -14,6 +14,7 @@
 
 """Tests for discovery_service."""
 
+import os
 import unittest
 
 import endpoints.api_config as api_config
@@ -56,11 +57,11 @@ class DiscoveryServiceTest(unittest.TestCase):
     return apiserving._ApiServer([AService], registry_path='/my_registry')
 
   def _check_api_config(self, expected_base_url, server, port, url_scheme, api,
-                        version):
+                        version, local=True):
     request = DiscoveryServiceTest.FakeRequest(
         server=server, port=port, url_scheme=url_scheme, api=api,
         version=version)
-    config_dict = self.discovery._generate_api_config_with_root(request)
+    config_dict = self._generate_api_config(request, local=local)
 
     # Check bns entry
     adapter = config_dict.get('adapter')
@@ -69,6 +70,12 @@ class DiscoveryServiceTest(unittest.TestCase):
 
     # Check root
     self.assertEqual(expected_base_url, config_dict.get('root'))
+
+  def _generate_api_config(self, request, local=True):
+    return self.discovery._generate_api_config_with_root(request, local=local)
+
+
+class ProdDiscoveryServiceTest(DiscoveryServiceTest):
 
   def testGenerateApiConfigWithRoot(self):
     server = 'test.appspot.com'
@@ -92,7 +99,7 @@ class DiscoveryServiceTest(unittest.TestCase):
     self._check_api_config(expected_base_url, server, port, url_scheme, api,
                            version)
 
-  def testGenerateApiConfigWithRootDefaultHttpPort(self):
+  def testGenerateApiConfigLocalhostDefaultHttpPort(self):
     server = 'localhost'
     port = '80'
     url_scheme = 'http'
@@ -113,6 +120,60 @@ class DiscoveryServiceTest(unittest.TestCase):
 
     self._check_api_config(expected_base_url, server, port, url_scheme, api,
                            version)
+
+
+ENV_VARIABLE_KEY = 'SERVER_SOFTWARE'
+class DevServerDiscoveryServiceTest(DiscoveryServiceTest):
+
+  def setUp(self):
+    super(DevServerDiscoveryServiceTest, self).setUp()
+    self.original_env_value = os.environ.get(ENV_VARIABLE_KEY)
+    self._set_env_value_for_remote_env()
+
+  def tearDown(self):
+    self._restore_env_value()
+
+  def _set_env_value_for_remote_env(self):
+    os.environ[ENV_VARIABLE_KEY] = 'Development/2.0.0'
+
+  def _restore_env_value(self):
+    if self.original_env_value is None:
+      del os.environ[ENV_VARIABLE_KEY]
+    else:
+      os.environ[ENV_VARIABLE_KEY] = self.original_env_value
+
+  def testGenerateApiConfigWithRootDefaultHttpPortRemoteGeneration(self):
+    server = 'test.appspot.com'
+    port = '80'
+    url_scheme = 'http'
+    api = 'aservice'
+    version = 'v3'
+    expected_base_url = '{0}://{1}/_ah/api'.format(url_scheme, server)
+
+    self._check_api_config(expected_base_url, server, port, url_scheme, api,
+                           version, local=False)
+
+  def testGenerateApiConfigWithRootDefaultHttpPort(self):
+    server = 'test.appspot.com'
+    port = '443'
+    url_scheme = 'https'
+    api = 'aservice'
+    version = 'v3'
+    expected_base_url = '{0}://{1}/_ah/api'.format(url_scheme, server)
+
+    self._check_api_config(expected_base_url, server, port, url_scheme, api,
+                           version)
+
+  def testGenerateApiConfigWithRootRemoteGeneration(self):
+    server = 'test.appspot.com'
+    port = '12345'
+    url_scheme = 'http'
+    api = 'aservice'
+    version = 'v3'
+    expected_base_url = '{0}://{1}:{2}/_ah/api'.format(url_scheme, server, port)
+
+    self._check_api_config(expected_base_url, server, port, url_scheme, api,
+                           version, local=False)
 
 if __name__ == '__main__':
   unittest.main()
